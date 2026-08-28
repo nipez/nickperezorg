@@ -74,58 +74,51 @@
       </div>
     </aside>
     <main>
-      <div class="grid">
-      <a class="card" href="#">
-        <div class="card-head"><div class="badge" style="background:#0e7a5f">LA</div><div class="card-name">LaunchList</div></div>
-        <div class="card-desc">A dead-simple waitlist page you can spin up in 60 seconds.</div>
-      </a>
-      <a class="card" href="#">
-        <div class="card-head"><div class="badge" style="background:#b4552d">SN</div><div class="card-name">Snipnote</div></div>
-        <div class="card-desc">Turn any webpage highlight into a searchable note.</div>
-      </a>
-      <a class="card" href="#">
-        <div class="card-head"><div class="badge" style="background:#3d5a80">CO</div><div class="card-name">ColdBrewed</div></div>
-        <div class="card-desc">A curated map of the best coffee shops for remote work.</div>
-      </a>
-      <a class="card" href="#">
-        <div class="card-head"><div class="badge" style="background:#7a5f0e">FO</div><div class="card-name">Formlet</div></div>
-        <div class="card-desc">Tiny embeddable forms that don’t look like forms.</div>
-      </a>
-      <a class="card" href="#">
-        <div class="card-head"><div class="badge" style="background:#5f3d80">ST</div><div class="card-name">Streakly</div></div>
-        <div class="card-desc">Habit tracking that only asks one question a day.</div>
-      </a>
-      <a class="card" href="#">
-        <div class="card-head"><div class="badge" style="background:#80513d">PA</div><div class="card-name">PageSpy</div></div>
-        <div class="card-desc">Get an alert when any webpage changes.</div>
-      </a>
-      <a class="card" href="#">
-        <div class="card-head"><div class="badge" style="background:#0e7a5f">DR</div><div class="card-name">Draftpile</div></div>
-        <div class="card-desc">A home for all your half-finished writing.</div>
-      </a>
-      <a class="card" href="#">
-        <div class="card-head"><div class="badge" style="background:#b4552d">QU</div><div class="card-name">QuickQR</div></div>
-        <div class="card-desc">Branded QR codes with scan analytics, no account needed.</div>
-      </a>
-      <a class="card" href="#">
-        <div class="card-head"><div class="badge" style="background:#3d5a80">MU</div><div class="card-name">Muted</div></div>
-        <div class="card-desc">A minimalist white-noise mixer for deep work.</div>
-      </a>
-      <a class="card" href="#">
-        <div class="card-head"><div class="badge" style="background:#7a5f0e">SH</div><div class="card-name">Shelfie</div></div>
-        <div class="card-desc">Track and share the books actually on your shelf.</div>
-      </a>
-      <a class="card" href="#">
-        <div class="card-head"><div class="badge" style="background:#5f3d80">PI</div><div class="card-name">Pingback</div></div>
-        <div class="card-desc">Uptime monitoring that texts you before your users do.</div>
-      </a>
-      <a class="card" href="#">
-        <div class="card-head"><div class="badge" style="background:#80513d">SU</div><div class="card-name">Sundial</div></div>
-        <div class="card-desc">A calendar that plans around your energy, not your hours.</div>
-      </a>
-      </div>
+      <div class="grid" id="cards"></div>
     </main>
   </div>
 </div>
+<script>
+(function () {
+  const grid = document.getElementById("cards");
+  function trackClick(id) {
+    const body = new Blob([JSON.stringify({ id: id })], { type: "application/json" });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon("/api/clicks", body);
+      return;
+    }
+    fetch("/api/clicks", { method: "POST", body: body, keepalive: true });
+  }
+  function render(cards) {
+    grid.replaceChildren();
+    cards.forEach(function (card) {
+      const href = card.url || "#";
+      const a = document.createElement("a");
+      a.className = "card";
+      a.href = href;
+      if (card.url) {
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.addEventListener("click", function () { trackClick(card.id); });
+      }
+      a.innerHTML =
+        '<div class="card-head">' +
+          '<div class="badge" style="background:' + card.color + '">' + card.badge + "</div>" +
+          '<div class="card-name"></div>' +
+        "</div>" +
+        '<div class="card-desc"></div>';
+      a.querySelector(".card-name").textContent = card.name;
+      a.querySelector(".card-desc").textContent = card.description;
+      grid.appendChild(a);
+    });
+  }
+  fetch("/api/cards")
+    .then(function (res) { return res.json(); })
+    .then(function (data) { render(data.cards || []); })
+    .catch(function () {
+      grid.textContent = "Projects failed to load. Refresh in a moment.";
+    });
+})();
+</script>
 </body>
 </html>
