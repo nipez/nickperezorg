@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin — Nick Perez</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #f6f3ec; }
+  body { font-family: 'Public Sans', sans-serif; color: #211e19; }
+  a { color: #0e7a5f; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 40px 20px 80px; }
+  h1 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 32px; margin: 0 0 8px; }
+  .lede { color: #6b6558; margin: 0 0 28px; }
+  .card { background: #fffdf8; border: 2px solid #e4ddcd; border-radius: 14px; padding: 20px; }
+  .login { max-width: 380px; }
+  label { display: block; font-size: 13px; font-weight: 600; margin: 0 0 6px; }
+  input, textarea { width: 100%; border: 2px solid #211e19; border-radius: 10px; padding: 10px 12px; font: inherit; background: #fff; color: inherit; }
+  textarea { min-height: 72px; resize: vertical; }
+  button { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; border: none; border-radius: 10px; padding: 10px 16px; cursor: pointer; }
+  .primary { background: #0e7a5f; color: #fffdf8; }
+  .primary:hover { background: #0a5c48; }
+  .ghost { background: transparent; color: #211e19; border: 2px solid #211e19; }
+  .danger { background: #b4552d; color: #fffdf8; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .err { color: #b4552d; font-size: 14px; margin: 10px 0 0; }
+  .ok { color: #0e7a5f; font-size: 14px; margin: 10px 0 0; }
+  .top { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 24px; }
+  .stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .stat { background: #fffdf8; border: 2px solid #e4ddcd; border-radius: 12px; padding: 12px 16px; min-width: 140px; }
+  .stat b { display: block; font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; }
+  .stat span { color: #6b6558; font-size: 13px; }
+  .editor { display: grid; gap: 16px; }
+  .project { display: grid; gap: 10px; }
+  .project-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+  .clicks { font-size: 13px; color: #6b6558; }
+  .clicks strong { color: #211e19; }
+  .hidden { display: none; }
+  .fields { display: grid; gap: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="login-view" class="card login">
+    <h1>Admin</h1>
+    <p class="lede">Sign in to edit project cards and see outbound clicks.</p>
+    <form id="login-form">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <div class="row" style="margin-top:14px">
+        <button class="primary" type="submit">Sign in</button>
+      </div>
+      <p class="err hidden" id="login-error"></p>
+    </form>
+  </section>
+
+  <section id="app-view" class="hidden">
+    <div class="top">
+      <div>
+        <h1>Projects</h1>
+        <p class="lede">Name, description, and destination URL. Clicks only count when a card has a URL.</p>
+      </div>
+      <div class="row">
+        <a href="/">View site</a>
+        <button class="ghost" id="logout" type="button">Log out</button>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="total-clicks">0</b><span>outbound clicks</span></div>
+      <div class="stat"><b id="week-clicks">0</b><span>last 7 days</span></div>
+    </div>
+    <div class="editor" id="editors"></div>
+    <div class="row" style="margin-top:20px">
+      <button class="primary" id="add-card" type="button">Add project</button>
+    </div>
+    <p class="ok hidden" id="save-ok"></p>
+    <p class="err hidden" id="save-error"></p>
+  </section>
+</div>
+<script>
+(function () {
+  const loginView = document.getElementById("login-view");
+  const appView = document.getElementById("app-view");
+  const loginError = document.getElementById("login-error");
+  const saveOk = document.getElementById("save-ok");
+  const saveError = document.getElementById("save-error");
+  const editors = document.getElementById("editors");
+
+  function show(el, text) {
+    el.textContent = text || "";
+    el.classList.toggle("hidden", !text);
+  }
+
+  async function api(path, options) {
+    const res = await fetch(path, Object.assign({ credentials: "same-origin" }, options));
+    const data = await res.json().catch(function () { return {}; });
+    if (!res.ok) {
+      const err = new Error(data.error || "Request failed");
+      err.status = res.status;
+      throw err;
+    }
+    return data;
+  }
+
+  function renderCards(cards) {
+    editors.replaceChildren();
+    let total = 0;
+    let week = 0;
+    cards.forEach(function (card) {
+      total += card.clicks || 0;
+      week += card.clicks_7d || 0;
+      const wrap = document.createElement("form");
+      wrap.className = "card project";
+      wrap.innerHTML =
+        '<div class="project-head">' +
+          "<div class='clicks'>Outbound clicks: <strong class='c-all'></strong> · 7 days: <strong class='c-week'></strong></div>" +
+          '<button class="danger" type="button" data-delete>Delete</button>' +
+        "</div>" +
+        '<div class="fields">' +
+          "<div><label>Name</label><input name='name' required maxlength='80'></div>" +
+          "<div><label>Description</label><textarea name='description' maxlength='280'></textarea></div>" +
+          "<div><label>URL</label><input name='url' placeholder='https://…'></div>" +
+        "</div>" +
+        '<div class="row"><button class="primary" type="submit">Save</button></div>';
+      wrap.querySelector(".c-all").textContent = card.clicks || 0;
+      wrap.querySelector(".c-week").textContent = card.clicks_7d || 0;
+      wrap.elements.name.value = card.name;
+      wrap.elements.description.value = card.description;
+      wrap.elements.url.value = card.url;
+      wrap.addEventListener("submit", function (event) {
+        event.preventDefault();
+        saveCard(card.id, {
+          name: wrap.elements.name.value,
+          description: wrap.elements.description.value,
+          url: wrap.elements.url.value
+        });
+      });
+      wrap.querySelector("[data-delete]").addEventListener("click", function () {
+        if (confirm("Delete “" + card.name + "”?")) {
+          deleteCard(card.id);
+        }
+      });
+      editors.appendChild(wrap);
+    });
+    document.getElementById("total-clicks").textContent = String(total);
+    document.getElementById("week-clicks").textContent = String(week);
+  }
+
+  async function loadCards() {
+    const data = await api("/api/admin/cards");
+    renderCards(data.cards || []);
+  }
+
+  async function saveCard(id, body) {
+    show(saveError, "");
+    try {
+      await api("/api/admin/cards/" + id, {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      show(saveOk, "Saved.");
+      await loadCards();
+    } catch (err) {
+      show(saveOk, "");
+      show(saveError, err.message);
+    }
+  }
+
+  async function deleteCard(id) {
+    show(saveError, "");
+    try {
+      await api("/api/admin/cards/" + id, { method: "DELETE" });
+      show(saveOk, "Deleted.");
+      await loadCards();
+    } catch (err) {
+      show(saveOk, "");
+      show(saveError, err.message);
+    }
+  }
+
+  async function showApp() {
+    loginView.classList.add("hidden");
+    appView.classList.remove("hidden");
+    await loadCards();
+  }
+
+  document.getElementById("login-form").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    show(loginError, "");
+    try {
+      await api("/api/admin/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password: document.getElementById("password").value })
+      });
+      await showApp();
+    } catch (err) {
+      show(loginError, err.message);
+    }
+  });
+
+  document.getElementById("logout").addEventListener("click", async function () {
+    await api("/api/admin/logout", { method: "POST" });
+    appView.classList.add("hidden");
+    loginView.classList.remove("hidden");
+  });
+
+  document.getElementById("add-card").addEventListener("click", async function () {
+    show(saveError, "");
+    try {
+      await api("/api/admin/cards", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ name: "New project", description: "", url: "" })
+      });
+      show(saveOk, "Added a project. Edit the name, description, and URL, then save.");
+      await loadCards();
+    } catch (err) {
+      show(saveOk, "");
+      show(saveError, err.message);
+    }
+  });
+
+  api("/api/admin/session").then(showApp).catch(function () {});
+})();
+</script>
+</body>
+</html>

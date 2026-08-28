@@ -1,0 +1,23 @@
+{
+  "name": "nickperezdotorg",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-28",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "nickperezdotorg",
+      "database_id": "46d7d4ed-3d5b-4454-bc41-543861116f70",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
