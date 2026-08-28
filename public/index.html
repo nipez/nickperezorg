@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nick Perez — Builder of internet-y things</title>
+<meta name="description" content="Nick Perez builds things, launches them, and sees what sticks. Everything shipped so far, in one place.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #f6f3ec; }
+  body { font-family: 'Public Sans', sans-serif; color: #211e19; }
+  a { color: #0e7a5f; text-decoration: none; }
+  a:hover { color: #0a5c48; text-decoration: underline; }
+  .wrap { min-height: 100vh; display: flex; justify-content: center; padding: 56px 32px 96px; }
+  .cols { display: flex; gap: 72px; align-items: flex-start; max-width: 1160px; width: 100%; flex-wrap: wrap; }
+  aside { width: 300px; flex-shrink: 0; position: sticky; top: 56px; display: flex; flex-direction: column; gap: 20px; }
+  .head { display: flex; flex-direction: column; gap: 20px; }
+  .avatar { width: 128px; height: 128px; border-radius: 50%; overflow: hidden; border: 3px solid #211e19; box-shadow: 6px 6px 0 #0e7a5f; position: relative; flex-shrink: 0; }
+  .avatar img { position: absolute; width: 100%; left: 0; top: -9%; }
+  h1 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 40px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.02em; }
+  .meta { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #6b6558; }
+  .dot { width: 4px; height: 4px; border-radius: 50%; background: #c9c2b2; }
+  .tag { font-size: 16px; line-height: 1.6; margin: 0; color: #3c372e; font-style: italic; }
+  .bio { font-size: 15px; line-height: 1.6; margin: 0; color: #3c372e; }
+  .sub { display: flex; border: 2px solid #211e19; border-radius: 10px; overflow: hidden; background: #fffdf8; }
+  .sub input { flex: 1; border: none; outline: none; padding: 12px 14px; font-size: 14px; font-family: 'Public Sans', sans-serif; background: transparent; color: #211e19; min-width: 0; }
+  .sub button { border: none; background: #0e7a5f; color: #fffdf8; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 14px; padding: 0 18px; cursor: pointer; }
+  .sub button:hover { background: #0a5c48; }
+  .socials { display: flex; gap: 14px; align-items: center; }
+  .socials a { color: #6b6558; display: flex; }
+  .socials a:hover { color: #0e7a5f; }
+  main { flex: 1; min-width: 480px; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .card { display: block; background: #fffdf8; border: 2px solid #e4ddcd; border-radius: 14px; padding: 20px 22px; color: inherit; transition: border-color .15s, transform .15s, box-shadow .15s; }
+  .card:hover { border-color: #211e19; transform: translate(-2px, -2px); box-shadow: 4px 4px 0 #0e7a5f; text-decoration: none; color: inherit; }
+  .card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .badge { width: 34px; height: 34px; border-radius: 9px; color: #fffdf8; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; flex-shrink: 0; }
+  .card-name { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px; }
+  .card-desc { font-size: 14px; line-height: 1.5; color: #6b6558; }
+  @media (max-width: 720px) {
+    .wrap { padding: 28px 18px 64px; }
+    .cols { gap: 36px; }
+    aside { position: static; width: 100%; }
+    main { min-width: 0; width: 100%; }
+    .grid { grid-template-columns: 1fr; }
+    .head { flex-direction: row; gap: 18px; align-items: center; }
+    .avatar { width: 96px; height: 96px; }
+    h1 { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="cols">
+    <aside>
+      <div class="head">
+        <div class="avatar"><img src="avatar.png" alt="Nick Perez"></div>
+        <div>
+          <h1>Nick Perez</h1>
+          <div class="meta"><span>Michigan</span><span class="dot"></span><span>Builder of internet-y things</span></div>
+        </div>
+      </div>
+      <p class="tag">I build things, launch them, and see what sticks.</p>
+      <p class="bio">Everything I've shipped so far — some experiments, some tools, all works in progress.</p>
+      <div class="sub">
+        <input type="text" placeholder="your@email.com">
+        <button>Follow along</button>
+      </div>
+      <div class="socials">
+        <a href="https://x.com/dreamandbuildit" target="_blank" aria-label="Twitter / X"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="https://www.linkedin.com/in/nipez/" target="_blank" aria-label="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+      </div>
+    </aside>
+    <main>
+      <div class="grid">
+      <a class="card" href="#">
+        <div class="card-head"><div class="badge" style="background:#0e7a5f">LA</div><div class="card-name">LaunchList</div></div>
+        <div class="card-desc">A dead-simple waitlist page you can spin up in 60 seconds.</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-head"><div class="badge" style="background:#b4552d">SN</div><div class="card-name">Snipnote</div></div>
+        <div class="card-desc">Turn any webpage highlight into a searchable note.</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-head"><div class="badge" style="background:#3d5a80">CO</div><div class="card-name">ColdBrewed</div></div>
+        <div class="card-desc">A curated map of the best coffee shops for remote work.</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-head"><div class="badge" style="background:#7a5f0e">FO</div><div class="card-name">Formlet</div></div>
+        <div class="card-desc">Tiny embeddable forms that don’t look like forms.</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-head"><div class="badge" style="background:#5f3d80">ST</div><div class="card-name">Streakly</div></div>
+        <div class="card-desc">Habit tracking that only asks one question a day.</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-head"><div class="badge" style="background:#80513d">PA</div><div class="card-name">PageSpy</div></div>
+        <div class="card-desc">Get an alert when any webpage changes.</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-head"><div class="badge" style="background:#0e7a5f">DR</div><div class="card-name">Draftpile</div></div>
+        <div class="card-desc">A home for all your half-finished writing.</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-head"><div class="badge" style="background:#b4552d">QU</div><div class="card-name">QuickQR</div></div>
+        <div class="card-desc">Branded QR codes with scan analytics, no account needed.</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-head"><div class="badge" style="background:#3d5a80">MU</div><div class="card-name">Muted</div></div>
+        <div class="card-desc">A minimalist white-noise mixer for deep work.</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-head"><div class="badge" style="background:#7a5f0e">SH</div><div class="card-name">Shelfie</div></div>
+        <div class="card-desc">Track and share the books actually on your shelf.</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-head"><div class="badge" style="background:#5f3d80">PI</div><div class="card-name">Pingback</div></div>
+        <div class="card-desc">Uptime monitoring that texts you before your users do.</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-head"><div class="badge" style="background:#80513d">SU</div><div class="card-name">Sundial</div></div>
+        <div class="card-desc">A calendar that plans around your energy, not your hours.</div>
+      </a>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>
